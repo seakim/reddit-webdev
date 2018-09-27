@@ -60,5 +60,33 @@ module.exports = (app) => {
         })
         .catch( err => console.log(err) )
     });
-}
 
+    app.get("/notes", (req, res) => {
+        db.Note.find()
+            .then( dbNote => res.json(dbNote) )
+            .catch( err => console.log(err) )
+    })
+
+    app.get("/notes/:id", (req, res) => {
+        let id = req.params.id;
+        db.Note.findOne( {_id: id} )
+            .then( dbNote => res.json(dbNote) )
+            .catch( err => console.log(err) )
+    })
+
+    app.delete("/notes/:noteId/articles/:articleId", (req, res) => {
+        let noteId = req.params.noteId;
+        let articleId = req.params.articleId;
+
+        db.Article.findOneAndUpdate(
+            { _id: articleId },
+            { $pull: {notes: noteId} }
+        )
+        .then( () => {
+            db.Note.deleteOne( {_id: noteId})
+                .then( dbNote => res.json(dbNote) )
+                .catch( err => console.log(err) )
+        })
+        .catch( err => console.log(err) )
+    })
+}

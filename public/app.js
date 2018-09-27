@@ -27,15 +27,28 @@ $(document).on("click", "div.article", function() {
     $("#notes").append("<button data-id='" + data._id + "' id='savenote'>Save Note</button>");
     $("#notes").append("<br><br><h4>Notes:</h4>");
     for (let i = 0; i < data.notes.length; i++) {
-      $("#notes").append("<div class='note'><h6>"+ data.notes[i].title +": " + data.notes[i].body 
+      $("#notes").append("<div class='note' data-id='"+ data.notes[i]._id +"'><h6>"+ data.notes[i].title +": " + data.notes[i].body 
         + "<a class='material-icons icon'>clear</a></h6></div>");
     }
-    
 
-    if (data.note) {
-      $("#titleinput").val(data.note.title);
-      $("#bodyinput").val(data.note.body);
+    if (data.notes) {
+      $("#titleinput").val(data.notes.title);
+      $("#bodyinput").val(data.notes.body);
+      $("div.note").on("click", function() {
+        noteId = $(this).attr("data-id");
+        console.log("noteId",noteId);
+        console.log("articleId",data._id);
+        $.ajax({
+          method: "DELETE",
+          url: "/notes/" + noteId + "/articles/" + data._id
+        })
+        .then( () => {
+          console.log("Note is deleted.");
+          location.reload();
+        })
+      })
     }
+    
   });
 });
 
